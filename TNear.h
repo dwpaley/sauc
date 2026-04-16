@@ -9889,7 +9889,7 @@ public:
 #ifdef CNEARTREE_INSTRUMENTED
                         colcount = 1;
 #endif
-                        tFarthest.insert( tFarthest.end(), make_triple( -dDR, m_ObjectStore[pt->m_ptRight], pt->m_pt_Right ) );
+                        tFarthest.insert( tFarthest.end(), make_triple( -dDR, m_ObjectStore[pt->m_ptRight], pt->m_ptRight ) );
                         if (k == 1 && dDR > dRadius) dRadius = dDR;
                         if( tFarthest.size( ) > k ) K_Resize( k, t, tFarthest, dRadius );
                         collide = pt->m_ptRight;
@@ -11216,7 +11216,7 @@ public:
 #ifdef CNEARTREE_INSTRUMENTED
                         colcount = 1;
 #endif
-                        tFarthest.insert( tFarthest.end(), make_triple( -dDR, m_ObjectStore[pt->m_ptRight], pt->m_pt_Right ) );
+                        tFarthest.insert( tFarthest.end(), make_triple( -dDR, m_ObjectStore[pt->m_ptRight], pt->m_ptRight ) );
                         if (k == 1 && dDR > dRadius) dRadius = dDR;
                         if( tFarthest.size( ) > k ) K_Resize( k, t, tFarthest, dRadius );
                         collide = pt->m_ptRight;

@@ -83,8 +83,8 @@ inline bool operator==(const triple<TR1, TR2, TR3>& rhs) {
 
 inline bool operator<(const triple<TR1, TR2, TR3>& rhs) { 
     return m_first < rhs.GetFirst() 
-      || (m_first == rhs.GetFirst() && m_second < rhs.GetSecond)
-      || (m_first == rhs.GetFirst() && m_second == rhs.GetSecond && m_third < rhs.GetThird); 
+      || (m_first == rhs.GetFirst() && m_second < rhs.GetSecond())
+      || (m_first == rhs.GetFirst() && m_second == rhs.GetSecond() && m_third < rhs.GetThird());
 }
 
 inline triple& operator=( const triple& tr )

@@ -40,6 +40,26 @@ echo ''`<body><font face="Arial,Helvetica,Times">''`
 #cat /tmp/outstr$$
 source /tmp/outstr$$
 rm /tmp/outstr$$
+if (! $?Centering)    set Centering = "P"
+if (! $?Algorithm)    set Algorithm = "1"
+if (! $?Similarity)   set Similarity = "2"
+if (! $?NumHits)      set NumHits = "20"
+if (! $?RangeSphere)  set RangeSphere = "1.5"
+if (! $?UsePercent)   set UsePercent = "no"
+if (! $?SortbyFam)    set SortbyFam = "no"
+if (! $?OutputStyle)  set OutputStyle = "1"
+if (! $?A)            set A = "5.0"
+if (! $?B)            set B = "5.0"
+if (! $?C)            set C = "5.0"
+if (! $?Alpha)        set Alpha = "90.0"
+if (! $?Beta)         set Beta = "90.0"
+if (! $?Gamma)        set Gamma = "90.0"
+if (! $?RangeA)       set RangeA = "1.0"
+if (! $?RangeB)       set RangeB = "1.0"
+if (! $?RangeC)       set RangeC = "1.0"
+if (! $?RangeAlpha)   set RangeAlpha = "5.0"
+if (! $?RangeBeta)    set RangeBeta = "5.0"
+if (! $?RangeGamma)   set RangeGamma = "5.0"
 echo ''`<center>''`
 echo ''`| <a href="#Results">GO TO RESULTS</a>''`
 echo ''`| <a href="''`${searchurl}''`">NEW SEARCH</a> |</center>''`
