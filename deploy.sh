@@ -129,11 +129,13 @@ chmod 644 "$HTDOCS/sauc-1.2.1.html"
 chmod 644 "$HTDOCS/gpl.txt" "$HTDOCS/lgpl.txt"
 
 # Try to set ownership (may fail without sudo)
-if chown apache:apache "$HTDOCS" 2>/dev/null; then
-    chown -R apache:apache "$HTDOCS"
-    [ "$CGIBIN" != "$HTDOCS" ] && chown -R apache:apache "$CGIBIN"
+# Use root:apache so Apache can read but not write to the web root
+if chown root:apache "$HTDOCS" 2>/dev/null; then
+    chown -R root:apache "$HTDOCS"
+    chmod 750 "$HTDOCS"
+    [ "$CGIBIN" != "$HTDOCS" ] && chown -R root:apache "$CGIBIN" && chmod 750 "$CGIBIN"
 else
-    echo "Warning: Could not chown to apache:apache (need sudo?)"
+    echo "Warning: Could not chown to root:apache (need sudo?)"
 fi
 
 # --- Create index.html symlink ---

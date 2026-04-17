@@ -67,8 +67,8 @@ fi
 chmod 644 "$HTDOCS"/*.dmp "$HTDOCS"/*.tsv "$HTDOCS"/*.idx 2>/dev/null || true
 chmod -R 755 "$HTDOCS/mathscribe-0.4.6" 2>/dev/null || true
 
-# Try to set ownership
-chown -R apache:apache "$HTDOCS" 2>/dev/null || echo "Warning: Could not chown (need sudo?)"
+# Try to set ownership (root:apache so Apache can read but not write)
+chown -R root:apache "$HTDOCS" 2>/dev/null || echo "Warning: Could not chown (need sudo?)"
 
 echo ""
 echo "=== Database Deployment Complete ==="
