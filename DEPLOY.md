@@ -31,13 +31,58 @@ cd /path/to/sauc
 # 5. Set file ownership (see below) - requires sudo
 ```
 
+## Local Testing
+
+You can test the full stack (static pages + CGI + binary) on your laptop without installing Apache. The repo includes `serve.py`, a minimal CGI-capable HTTP server built on Python's stdlib.
+
+### One-time setup
+
+```bash
+cd /path/to/sauc
+
+# Build the binary and generate CGI/HTML into ../sauc-deploy/
+./deploy.sh config_localhost.sh
+
+# Decompress and copy the database files (~895 MB, takes a minute)
+./deploy_db.sh config_localhost.sh
+```
+
+### Start the server
+
+```bash
+./serve.py
+# or explicitly:
+./serve.py config_localhost.sh
+```
+
+The server listens on `http://localhost:8000/` by default. Open that URL in a browser — you should see the SAUC query form. Submitting the form calls the CGI script at `/cgi-bin/sauc_cgi.py`.
+
+### Iterating on changes
+
+- **Changes to `sauc_cgi.py`, `sauc.html.m4`, or C++ source:** rerun `./deploy.sh config_localhost.sh` (it will recompile the binary if source changed). No need to restart `serve.py` — it re-exec's the CGI for each request.
+- **Changes to database files:** rerun `./deploy_db.sh config_localhost.sh`.
+- **Changes to `serve.py`:** restart the server with Ctrl+C and re-run it.
+
+### Quick CGI test via curl
+
+```bash
+curl "http://localhost:8000/cgi-bin/sauc_cgi.py?Centering=P&A=78&B=78&C=38&Alpha=90&Beta=90&Gamma=90&Algorithm=2&Similarity=2&NumHits=5&RangeSphere=1.5&UsePercent=no&SortbyFam=no&OutputStyle=1"
+```
+Expected: HTML starting with `<!DOCTYPE html>` containing matched PDB entries (lysozyme).
+
+### Notes
+
+- `serve.py` uses Python's `CGIHTTPRequestHandler`. It binds to `127.0.0.1` only — not exposed on the network.
+- The host and port come from `HTTPDSERVER` in the config file (e.g., `localhost:8000`).
+- If port 8000 is busy, edit `HTTPDSERVER` in `config_localhost.sh` and rerun `./deploy.sh` + `./serve.py`.
+
 ## Configuration Files
 
 Two config files are provided:
 
 | Config File | Purpose |
 |-------------|---------|
-| `config_localhost.sh` | Local development (serves from project directory) |
+| `config_localhost.sh` | Local development (serves from `../sauc-deploy/` via `serve.py`) |
 | `config_viper_lbl.sh` | Production deployment to viper.lbl.gov:8083 |
 
 To deploy to a different server, copy `config_viper_lbl.sh` and modify the variables:
@@ -205,6 +250,7 @@ For production deployments, also consider:
 |------|---------|
 | `deploy.sh` | Main deployment script (code, CGI, HTML) |
 | `deploy_db.sh` | Database deployment script |
+| `serve.py` | Local CGI-capable HTTP server for testing |
 | `config_*.sh` | Environment-specific configuration |
 | `sauc_cgi.py` | CGI script template (has `__BINPATH__` etc. placeholders) |
 | `sauc.html.m4` | HTML template (m4 macros) |
