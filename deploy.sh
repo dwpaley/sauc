@@ -27,13 +27,16 @@ fi
 . "$SCRIPT_DIR/$CONFIG_FILE"
 
 # --- Verify required variables ---
-for var in HTTPDSERVER HTDOCS BINPATH SEARCHURL CGIPATH CGIBIN MATHSCRIBEURL PYTHON CXXFLAGS CFLAGS; do
-    eval "val=\$$var"
-    if [ -z "$val" ]; then
-        echo "ERROR: Required variable $var is not set in $CONFIG_FILE"
-        exit 1
-    fi
-done
+[ -z "$HTTPDSERVER" ] && echo "ERROR: HTTPDSERVER not set in $CONFIG_FILE" && exit 1
+[ -z "$HTDOCS" ] && echo "ERROR: HTDOCS not set in $CONFIG_FILE" && exit 1
+[ -z "$BINPATH" ] && echo "ERROR: BINPATH not set in $CONFIG_FILE" && exit 1
+[ -z "$SEARCHURL" ] && echo "ERROR: SEARCHURL not set in $CONFIG_FILE" && exit 1
+[ -z "$CGIPATH" ] && echo "ERROR: CGIPATH not set in $CONFIG_FILE" && exit 1
+[ -z "$CGIBIN" ] && echo "ERROR: CGIBIN not set in $CONFIG_FILE" && exit 1
+[ -z "$MATHSCRIBEURL" ] && echo "ERROR: MATHSCRIBEURL not set in $CONFIG_FILE" && exit 1
+[ -z "$PYTHON" ] && echo "ERROR: PYTHON not set in $CONFIG_FILE" && exit 1
+[ -z "$CXXFLAGS" ] && echo "ERROR: CXXFLAGS not set in $CONFIG_FILE" && exit 1
+[ -z "$CFLAGS" ] && echo "ERROR: CFLAGS not set in $CONFIG_FILE" && exit 1
 
 echo "Deploying SAUC to $HTTPDSERVER"
 echo "  HTDOCS: $HTDOCS"
