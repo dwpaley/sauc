@@ -124,7 +124,7 @@ httpd -t && apachectl graceful
 
 ## File Ownership (Required)
 
-The deploy scripts attempt `chown apache:apache` but this requires sudo. For security, use **root:apache** ownership so Apache cannot write to the web root:
+The deploy scripts set `root:apache` ownership so Apache can read but not write to the web root. This requires sudo, so the scripts print a warning if it fails. Verify ownership manually:
 
 ```bash
 sudo chown -R root:apache /var/www/sauc
