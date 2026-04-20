@@ -38,6 +38,19 @@ fi
 [ -z "$CXXFLAGS" ] && echo "ERROR: CXXFLAGS not set in $CONFIG_FILE" && exit 1
 [ -z "$CFLAGS" ] && echo "ERROR: CFLAGS not set in $CONFIG_FILE" && exit 1
 
+# Default remote vars to empty if not set by config (local deploy)
+REMOTE_HOST="${REMOTE_HOST:-}"
+REMOTE_PATH_PREFIX="${REMOTE_PATH_PREFIX:-}"
+
+# Helper: run a command locally or on the remote host
+remote_sh() {
+    if [ -n "$REMOTE_HOST" ]; then
+        ssh "$REMOTE_HOST" "$@"
+    else
+        "$@"
+    fi
+}
+
 echo "Deploying SAUC to $HTTPDSERVER"
 echo "  HTDOCS: $HTDOCS"
 echo "  CGIBIN: $CGIBIN"
@@ -106,40 +119,43 @@ m4 \
     < "$SCRIPT_DIR/sauc.html.m4" > "$SCRIPT_DIR/sauc-1.2.1.html.configured"
 
 # --- Create destination directories ---
-mkdir -p "$HTDOCS"
-mkdir -p "$CGIBIN"
+remote_sh mkdir -p "$HTDOCS"
+remote_sh mkdir -p "$CGIBIN"
 
-# --- Install files ---
+# --- Set permissions on local source files before copy ---
+chmod 755 "$SCRIPT_DIR/sauc-1.2.1.exe"
+chmod 755 "$SCRIPT_DIR/sauc_cgi.py.configured"
+chmod 644 "$SCRIPT_DIR/sauc-1.2.1.html.configured"
+chmod 644 "$SCRIPT_DIR/gpl.txt"
+chmod 644 "$SCRIPT_DIR/lgpl.txt"
+
+# --- Install files (scp -p or cp -p to preserve mode bits) ---
 echo "Installing files..."
-cp "$SCRIPT_DIR/sauc-1.2.1.exe" "$HTDOCS/"
-cp "$SCRIPT_DIR/sauc_cgi.py.configured" "$CGIBIN/sauc_cgi.py"
-cp "$SCRIPT_DIR/sauc-1.2.1.html.configured" "$HTDOCS/sauc-1.2.1.html"
-cp "$SCRIPT_DIR/gpl.txt" "$HTDOCS/"
-cp "$SCRIPT_DIR/lgpl.txt" "$HTDOCS/"
-
-# If CGIBIN != HTDOCS, copy exe there too
-if [ "$CGIBIN" != "$HTDOCS" ]; then
-    cp "$SCRIPT_DIR/sauc-1.2.1.exe" "$CGIBIN/"
-fi
-
-# --- Set permissions ---
-chmod 755 "$HTDOCS/sauc-1.2.1.exe"
-chmod 755 "$CGIBIN/sauc_cgi.py"
-chmod 644 "$HTDOCS/sauc-1.2.1.html"
-chmod 644 "$HTDOCS/gpl.txt" "$HTDOCS/lgpl.txt"
-
-# Try to set ownership (may fail without sudo)
-# Use root:apache so Apache can read but not write to the web root
-if chown root:apache "$HTDOCS" 2>/dev/null; then
-    chown -R root:apache "$HTDOCS"
-    chmod 750 "$HTDOCS"
-    [ "$CGIBIN" != "$HTDOCS" ] && chown -R root:apache "$CGIBIN" && chmod 750 "$CGIBIN"
+if [ -n "$REMOTE_HOST" ]; then
+    scp -p "$SCRIPT_DIR/sauc-1.2.1.exe"             "${REMOTE_PATH_PREFIX}${HTDOCS}/"
+    scp -p "$SCRIPT_DIR/sauc_cgi.py.configured"     "${REMOTE_PATH_PREFIX}${CGIBIN}/sauc_cgi.py"
+    scp -p "$SCRIPT_DIR/sauc-1.2.1.html.configured" "${REMOTE_PATH_PREFIX}${HTDOCS}/sauc-1.2.1.html"
+    scp -p "$SCRIPT_DIR/gpl.txt"                    "${REMOTE_PATH_PREFIX}${HTDOCS}/"
+    scp -p "$SCRIPT_DIR/lgpl.txt"                   "${REMOTE_PATH_PREFIX}${HTDOCS}/"
+    if [ "$CGIBIN" != "$HTDOCS" ]; then
+        scp -p "$SCRIPT_DIR/sauc-1.2.1.exe"         "${REMOTE_PATH_PREFIX}${CGIBIN}/"
+    fi
 else
-    echo "Warning: Could not chown to root:apache (need sudo?)"
+    cp -p "$SCRIPT_DIR/sauc-1.2.1.exe"               "$HTDOCS/"
+    cp -p "$SCRIPT_DIR/sauc_cgi.py.configured"        "$CGIBIN/sauc_cgi.py"
+    cp -p "$SCRIPT_DIR/sauc-1.2.1.html.configured"    "$HTDOCS/sauc-1.2.1.html"
+    cp -p "$SCRIPT_DIR/gpl.txt"                       "$HTDOCS/"
+    cp -p "$SCRIPT_DIR/lgpl.txt"                      "$HTDOCS/"
+    if [ "$CGIBIN" != "$HTDOCS" ]; then
+        cp -p "$SCRIPT_DIR/sauc-1.2.1.exe"            "$CGIBIN/"
+    fi
 fi
+
+echo "Note: chown root:apache must be run manually on the target server (requires sudo)."
+echo "      See post_deploy_sudo.sh for the commands to run."
 
 # --- Create index.html symlink ---
-ln -sf sauc-1.2.1.html "$HTDOCS/index.html"
+remote_sh ln -sf sauc-1.2.1.html "$HTDOCS/index.html"
 
 # --- Write version stamp ---
 GIT_COMMIT=""
@@ -147,14 +163,18 @@ if [ -d "$SCRIPT_DIR/.git" ]; then
     GIT_COMMIT=$(git -C "$SCRIPT_DIR" rev-parse HEAD 2>/dev/null || echo "unknown")
 fi
 
-cat > "$HTDOCS/DEPLOYED_VERSION" << EOF
-version: 1.2.1
+VERSION_CONTENT="version: 1.2.1
 deployed: $(date -Iseconds)
 host: $(hostname)
 git_commit: ${GIT_COMMIT:-none}
 deployer: ${USER:-unknown}
-config: $CONFIG_FILE
-EOF
+config: $CONFIG_FILE"
+
+if [ -n "$REMOTE_HOST" ]; then
+    printf '%s\n' "$VERSION_CONTENT" | ssh "$REMOTE_HOST" "cat > ${HTDOCS}/DEPLOYED_VERSION"
+else
+    printf '%s\n' "$VERSION_CONTENT" > "$HTDOCS/DEPLOYED_VERSION"
+fi
 
 # --- Cleanup temp files ---
 rm -f "$SCRIPT_DIR/sauc_cgi.py.configured"
