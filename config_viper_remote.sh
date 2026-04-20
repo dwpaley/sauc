@@ -1,5 +1,6 @@
 #!/bin/sh
 # config_viper_lbl.sh - SAUC production config for viper.lbl.gov
+# Remote build: build on a separate server and transfer to viper
 # Source this before running deploy.sh or deploy_db.sh
 
 HTTPDSERVER=viper.lbl.gov:8083
