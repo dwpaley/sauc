@@ -34,3 +34,8 @@ CXXFLAGS="-Wall -O3 -DUSE_LOCAL_HEADERS -g -fopenmp -ftree-parallelize-loops=8"
 export CXXFLAGS
 CFLAGS="-Wall -O3 -DUSE_LOCAL_HEADERS -g -fopenmp -ftree-parallelize-loops=8"
 export CFLAGS
+
+REMOTE_HOST="viper.lbl.gov"
+export REMOTE_HOST
+REMOTE_PATH_PREFIX="viper.lbl.gov:"
+export REMOTE_PATH_PREFIX
