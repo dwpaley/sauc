@@ -24,6 +24,17 @@ fi
 
 . "$SCRIPT_DIR/$CONFIG_FILE"
 
+REMOTE_HOST="${REMOTE_HOST:-}"
+REMOTE_PATH_PREFIX="${REMOTE_PATH_PREFIX:-}"
+
+remote_sh() {
+    if [ -n "$REMOTE_HOST" ]; then
+        ssh "$REMOTE_HOST" "$@"
+    else
+        "$@"
+    fi
+}
+
 if [ -z "$HTDOCS" ]; then
     echo "ERROR: HTDOCS not set in $CONFIG_FILE"
     exit 1
@@ -32,7 +43,7 @@ fi
 echo "Deploying database files to $HTDOCS"
 
 # Create destination
-mkdir -p "$HTDOCS"
+remote_sh mkdir -p "$HTDOCS"
 
 # Decompress any .bz2 files that need it
 echo "Checking for compressed files to decompress..."
@@ -50,28 +61,41 @@ echo "Copying database files..."
 for ext in dmp tsv idx; do
     for f in "$SCRIPT_DIR"/*.$ext; do
         [ -f "$f" ] || continue
-        cp -v "$f" "$HTDOCS/"
+        chmod 644 "$f"
+        if [ -n "$REMOTE_HOST" ]; then
+            scp -p "$f" "${REMOTE_PATH_PREFIX}${HTDOCS}/"
+        else
+            cp -pv "$f" "$HTDOCS/"
+        fi
     done
 done
 
 # Copy mathscribe
 if [ -d "$SCRIPT_DIR/mathscribe-0.4.6" ]; then
     echo "Copying mathscribe..."
-    cp -r "$SCRIPT_DIR/mathscribe-0.4.6" "$HTDOCS/"
+    chmod -R 755 "$SCRIPT_DIR/mathscribe-0.4.6"
+    if [ -n "$REMOTE_HOST" ]; then
+        scp -rp "$SCRIPT_DIR/mathscribe-0.4.6" "${REMOTE_PATH_PREFIX}${HTDOCS}/"
+    else
+        cp -rp "$SCRIPT_DIR/mathscribe-0.4.6" "$HTDOCS/"
+    fi
 fi
 
 # Copy last_update if present
-[ -f "$SCRIPT_DIR/last_update" ] && cp "$SCRIPT_DIR/last_update" "$HTDOCS/"
+if [ -f "$SCRIPT_DIR/last_update" ]; then
+    chmod 644 "$SCRIPT_DIR/last_update"
+    if [ -n "$REMOTE_HOST" ]; then
+        scp -p "$SCRIPT_DIR/last_update" "${REMOTE_PATH_PREFIX}${HTDOCS}/"
+    else
+        cp -p "$SCRIPT_DIR/last_update" "$HTDOCS/"
+    fi
+fi
 
-# Set permissions
-chmod 644 "$HTDOCS"/*.dmp "$HTDOCS"/*.tsv "$HTDOCS"/*.idx 2>/dev/null || true
-chmod -R 755 "$HTDOCS/mathscribe-0.4.6" 2>/dev/null || true
-
-# Try to set ownership (root:apache so Apache can read but not write)
-chown -R root:apache "$HTDOCS" 2>/dev/null || echo "Warning: Could not chown (need sudo?)"
+echo "Note: chown root:apache must be run manually on the target server (requires sudo)."
+echo "      See post_deploy_sudo.sh for the commands to run."
 
 echo ""
 echo "=== Database Deployment Complete ==="
 echo "Files deployed to $HTDOCS"
-ls -lh "$HTDOCS"/*.dmp 2>/dev/null | head -5
+remote_sh sh -c "ls -lh ${HTDOCS}/*.dmp 2>/dev/null | head -5"
 echo "..."
