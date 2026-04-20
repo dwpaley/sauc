@@ -27,7 +27,7 @@ export MATHSCRIBEURL
 CGIMETHOD=GET
 export CGIMETHOD
 
-PYTHON=python3
+PYTHON=/var/www/cctbx_xfel/conda/envs/httpd/bin/python3
 export PYTHON
 
 # Compiler flags - same as other configs
