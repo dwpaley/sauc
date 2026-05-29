@@ -1,0 +1,3 @@
+# Generated deployment artifacts (produced from sauc.html.m4 by deploy.sh / Makefile)
+sauc-1.2.1.html
+*.configured
