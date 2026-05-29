@@ -3,16 +3,16 @@
 # Local version: build is running on viper.lbl.gov
 # Source this before running deploy.sh or deploy_db.sh
 
-HTTPDSERVER=viper.lbl.gov
+HTTPDSERVER=sauc.lbl.gov
 export HTTPDSERVER
 
 HTDOCS=/var/www/sauc
 export HTDOCS
 
-SEARCHURL=https://viper.lbl.gov/
+SEARCHURL=https://sauc.lbl.gov/
 export SEARCHURL
 
-CGIPATH=https://viper.lbl.gov
+CGIPATH=https://sauc.lbl.gov
 export CGIPATH
 
 CGIBIN=/var/www/sauc
@@ -21,7 +21,7 @@ export CGIBIN
 BINPATH=/var/www/sauc/sauc-1.2.1.exe
 export BINPATH
 
-MATHSCRIBEURL=https://viper.lbl.gov/mathscribe-0.4.6
+MATHSCRIBEURL=https://sauc.lbl.gov/mathscribe-0.4.6
 export MATHSCRIBEURL
 
 CGIMETHOD=GET
