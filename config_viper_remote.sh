@@ -3,16 +3,16 @@
 # Remote build: build on a separate server and transfer to viper
 # Source this before running deploy.sh or deploy_db.sh
 
-HTTPDSERVER=viper.lbl.gov:8083
+HTTPDSERVER=viper.lbl.gov
 export HTTPDSERVER
 
 HTDOCS=/var/www/sauc
 export HTDOCS
 
-SEARCHURL=http://viper.lbl.gov:8083/
+SEARCHURL=https://viper.lbl.gov/
 export SEARCHURL
 
-CGIPATH=http://viper.lbl.gov:8083
+CGIPATH=https://viper.lbl.gov
 export CGIPATH
 
 CGIBIN=/var/www/sauc
@@ -21,7 +21,7 @@ export CGIBIN
 BINPATH=/var/www/sauc/sauc-1.2.1.exe
 export BINPATH
 
-MATHSCRIBEURL=http://viper.lbl.gov:8083/mathscribe-0.4.6
+MATHSCRIBEURL=https://viper.lbl.gov/mathscribe-0.4.6
 export MATHSCRIBEURL
 
 CGIMETHOD=GET
