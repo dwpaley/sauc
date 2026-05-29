@@ -127,7 +127,8 @@ using namespace std;
 static std::string html_escape(const std::string &s) {
     std::string result;
     result.reserve(s.size());
-    for (char c : s) {
+    for (std::string::size_type i = 0; i < s.size(); ++i) {
+        char c = s[i];
         switch (c) {
             case '&':  result += "&amp;";  break;
             case '<':  result += "&lt;";   break;
