@@ -122,6 +122,23 @@ void SphereResults( std::ostream& out,
 
 using namespace std;
 
+/* Escape database-sourced free text for safe HTML embedding.
+   Order matters: & must be replaced first to avoid double-escaping. */
+static std::string html_escape(const std::string &s) {
+    std::string result;
+    result.reserve(s.size());
+    for (char c : s) {
+        switch (c) {
+            case '&':  result += "&amp;";  break;
+            case '<':  result += "&lt;";   break;
+            case '>':  result += "&gt;";   break;
+            case '"':  result += "&quot;"; break;
+            default:   result += c;        break;
+        }
+    }
+    return result;
+}
+
 CNearTree <unitcell> * cellTree[6] = {NULL,NULL,NULL,NULL,NULL,NULL};
 CNearTree <unitcell>::iterator cellTree_itend[6];
 string sauc_NT_ckp_names[7] =
@@ -1651,7 +1668,7 @@ void SphereResults( std::ostream& out,
                                                (dbtype==PDB_DBTYPE)?PDBentries:
                                                ((dbtype==CSD_DBTYPE)?CSDcells:CODentries),
                                                idArray[numRow].c_str(),0);
-                out << ind+1 << ": "<< myfamily;
+                out << ind+1 << ": "<< html_escape(myfamily);
 
                 out << std::endl;
             }
@@ -1719,12 +1736,12 @@ void SphereResults( std::ostream& out,
                 if (compoundfield >= 0 && split_fields[compoundfield].length > 0 &&
                     compoundfield < psm_handle->maxfieldno) {
                     out << "      " <<
-                    PSM_getstringfield(psm_handle,split_fields[(size_t)compoundfield]) << std::endl;
+                    html_escape(PSM_getstringfield(psm_handle,split_fields[(size_t)compoundfield])) << std::endl;
                 }
                 if (sourcefield >= 0 && split_fields[sourcefield].length > 0 &&
                     sourcefield < psm_handle->maxfieldno) {
                     out << "      " <<
-                    PSM_getstringfield(psm_handle,split_fields[(size_t)sourcefield]);
+                    html_escape(PSM_getstringfield(psm_handle,split_fields[(size_t)sourcefield]));
                 }
                 if (resfield >= 0 && split_fields[resfield].length > 0 &&
                     resfield < psm_handle->maxfieldno) {
@@ -1824,7 +1841,7 @@ void SphereResults( std::ostream& out,
                                                (dbtype==PDB_DBTYPE)?PDBentries:
                                                ((dbtype==CSD_DBTYPE)?CSDcells:CODentries),
                                                idArray[numRow].c_str(),0);
-                out << ii+1 << ": "<< myfamily;
+                out << ii+1 << ": "<< html_escape(myfamily);
 
                 if (myfamilycount[ii] > 1) {
                     out << " [" << myfamilycount[ii] << " cells found] ";
@@ -1903,12 +1920,12 @@ void SphereResults( std::ostream& out,
                 if (compoundfield >= 0 && split_fields[compoundfield].length > 0 &&
                     compoundfield < psm_handle->maxfieldno) {
                     out << "      " <<
-                    PSM_getstringfield(psm_handle,split_fields[(size_t)compoundfield]) << std::endl;
+                    html_escape(PSM_getstringfield(psm_handle,split_fields[(size_t)compoundfield])) << std::endl;
                 }
                 if (sourcefield >= 0 && split_fields[sourcefield].length > 0 &&
                     sourcefield < psm_handle->maxfieldno) {
                     out << "      " <<
-                    PSM_getstringfield(psm_handle,split_fields[(size_t)sourcefield]);
+                    html_escape(PSM_getstringfield(psm_handle,split_fields[(size_t)sourcefield]));
                 }
                 if (resfield >= 0 && split_fields[resfield].length > 0 &&
                     resfield < psm_handle->maxfieldno) {
