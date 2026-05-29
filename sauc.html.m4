@@ -168,16 +168,15 @@ Search of Alternate Unit Cells - SAUC
 <H1>SAUC</H1>
 Search of Alternate Unit Cells
 <br />Copyright Keith J. McGill 2013, 2014
-<br />Keith J McGill, Mojgan Asadi, Maria T. Karakasheva, Lawrence C. Andrews, Herbert J. Bernstein
+<br />SAUC was created by: Keith J McGill, Mojgan Asadi, Maria T. Karakasheva, Lawrence C. Andrews, Herbert J. Bernstein.
 <br />Rev 0.8, 24 Apr 2014, Mojgan Asadi, Herbert J. Bernstein
 <br />Rev 0.9, 21 Jul 2015, Herbert J. Bernstein
 <br />Rev 1.0, 22 Nov 2016, Herbert J. Bernstein
 <br />Rev 1.1, 11 Apr 2019, Herbert J. Bernstein
 <br />Rev 1.2, 15 Oct 2022, Herbert J. Bernstein
 <br />Rev 1.2.1, 10 Feb 2025, Herbert J. Bernstein
-<br />Work Supported In Part By NIGMS
-<br />Original Contact Email: <A HREF=mailto:kjmcgill7@gmail.com>kjmcgill7@gmail.com</A>
-<br />Support Contact Email: <a href=mailto:yayahjb@gmail.com>yayahjb@gmail.com</a>
+<br />Currently maintained by: Daniel Paley, Aaron Brewster, Herbert Bernstein as a project of the DIALS US National Resource, supported by National Institutes of Health / National Institute of General Medical Sciences grant R24GM154040.
+<br />Contact: Daniel Paley <a href=mailto:dwpaley@lbl.gov>dwpaley@lbl.gov</a>
 <FORM method='CGIMETHOD()` ACTION="'CGIBIN()`/'SAUCCGI()`">
 </center>
 <font size="-1">
