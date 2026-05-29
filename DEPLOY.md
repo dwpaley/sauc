@@ -83,7 +83,7 @@ Two config files are provided:
 | Config File | Purpose |
 |-------------|---------|
 | `config_localhost.sh` | Local development (serves from `../sauc-deploy/` via `serve.py`) |
-| `config_viper_lbl.sh` | Production deployment to viper.lbl.gov:8083 |
+| `config_viper_lbl.sh` | Production deployment to viper.lbl.gov (HTTPS) |
 
 To deploy to a different server, copy `config_viper_lbl.sh` and modify the variables:
 
@@ -200,12 +200,12 @@ Expected: Output starting with `Content-type: text/html`.
 
 ### 3. Test via HTTP:
 ```bash
-curl -s "http://viper.lbl.gov:8083/sauc_cgi.py?Centering=P&A=78&B=78&C=38&Alpha=90&Beta=90&Gamma=90&Algorithm=2&Similarity=2&NumHits=5&RangeSphere=1.5" | head -20
+curl -s "https://viper.lbl.gov/sauc_cgi.py?Centering=P&A=78&B=78&C=38&Alpha=90&Beta=90&Gamma=90&Algorithm=2&Similarity=2&NumHits=5&RangeSphere=1.5" | head -20
 ```
 Expected: HTML with SAUC results.
 
 ### 4. Test in browser:
-Navigate to `http://viper.lbl.gov:8083/` and submit the form with default values.
+Navigate to `https://viper.lbl.gov/` and submit the form with default values.
 
 ## Troubleshooting
 
