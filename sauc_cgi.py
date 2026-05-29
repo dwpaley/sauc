@@ -209,12 +209,12 @@ def render_page(p, binary_output, binary_error):
     print("</center>")
     print("<p>")
     print('<hr /><p><h2><a name="Results"></a>Results of SAUC Run</h2>')
-    print('<PRE><font face="Monaco, Andale Mono" size="2">')
+    print('<div style="font-family: \'Monaco\',\'Andale Mono\',monospace; font-size: small;">')
     if binary_output:
-        print(html.escape(binary_output))
+        print(binary_output)
     if binary_error:
         print(f'<!-- stderr: {html.escape(binary_error[:500])} -->')
-    print("</font></pre>")
+    print("</div>")
     print("<p><hr />")
     print(f'<center>| <a href="#Results">GO TO RESULTS</a> | '
           f'<a href="{search_url_safe}">NEW SEARCH</a> |</center>')
